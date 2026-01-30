@@ -2,5 +2,8 @@
   "1.0.0": {
     "en": "Initial release with two-scale tariff management, seasonal schedules, cost tracking, flow cards, and energy chart widget.",
     "bg": "Първоначално издание с управление на двутарифна система, сезонни графици, проследяване на разходи, карти за автоматизация и уиджет за енергийна графика."
+  },
+  "1.0.1": {
+    "en": "Initial commit"
   }
 }
