@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a5f2a"/>
+      <stop offset="100%" style="stop-color:#00A651"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="40" cy="40" r="38" fill="url(#bgGrad)"/>
+
+  <!-- Decorative rings -->
+  <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+  <circle cx="40" cy="40" r="28" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+
+  <!-- Lightning bolt -->
+  <path d="M46 12L30 38h12l-6 30 18-34H42z" fill="white"/>
+
+  <!-- Outer ring -->
+  <circle cx="40" cy="40" r="36" fill="none" stroke="white" stroke-width="2.5"/>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Cost today",
+    "bg": "Цена днес"
+  },
+  "units": {
+    "en": "EUR",
+    "bg": "EUR"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icons/cost-day.svg",
+  "decimals": 2,
+  "insights": true
+}

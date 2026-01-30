@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Electricity Tariff Settings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-sans p-5 max-w-xl mx-auto bg-gray-100">
+  <div id="current-status" class="bg-emerald-50 border-l-4 border-emerald-500 p-4 mb-6 rounded-r-lg">
+    <strong class="text-emerald-600">Current Status:</strong> Loading...
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow-sm mb-6">
+    <h2 class="text-gray-800 border-b-2 border-emerald-500 pb-2.5 text-xl font-semibold mb-4">Tariff Rates</h2>
+
+    <div class="mb-4">
+      <label for="currency" class="block mb-1.5 font-medium text-gray-600 text-sm">Currency</label>
+      <select id="currency" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+        <option value="EUR">EUR (Euro)</option>
+        <option value="BGN">BGN (Bulgarian Lev) - Legacy</option>
+      </select>
+      <div class="text-xs text-gray-500 mt-1">Bulgaria adopted the Euro in 2025</div>
+    </div>
+
+    <div class="flex gap-3 items-center">
+      <div class="flex-1">
+        <label for="dayRate" class="block mb-1.5 font-medium text-gray-600 text-sm">Day Rate (per kWh)</label>
+        <input type="number" id="dayRate" step="0.0001" min="0" placeholder="0.12" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+      </div>
+      <div class="flex-1">
+        <label for="nightRate" class="block mb-1.5 font-medium text-gray-600 text-sm">Night Rate (per kWh)</label>
+        <input type="number" id="nightRate" step="0.0001" min="0" placeholder="0.06" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow-sm mb-6">
+    <h2 class="text-gray-800 border-b-2 border-emerald-500 pb-2.5 text-xl font-semibold mb-4">Seasonal Schedules</h2>
+    <p class="text-xs text-gray-500 mt-1 mb-4">Define seasons with different day/night tariff hours. The first matching season will be used.</p>
+
+    <div id="seasons-container"></div>
+
+    <button class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2.5 rounded-lg font-medium transition border-none cursor-pointer text-sm" onclick="addSeason()">+ Add Season</button>
+  </div>
+
+  <div class="flex gap-3 mt-5">
+    <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium transition border-none cursor-pointer text-sm" onclick="saveSettings()">Save Settings</button>
+  </div>
+
+  <div id="status-message" class="hidden rounded-lg mt-4 px-4 py-3 text-sm"></div>
+
+  <script type="text/javascript" src="/homey.js"></script>
+  <script type="text/javascript">
+    let HomeyRef = null;
+
+    function onHomeyReady(Homey) {
+      HomeyRef = Homey;
+      loadSettings();
+      Homey.ready();
+    }
+
+    async function apiCall(method, path, body = null) {
+      return new Promise((resolve, reject) => {
+        HomeyRef._cf.emit('api', { method, path, body }, (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        });
+      });
+    }
+
+    async function loadSettings() {
+      try {
+        const settings = await apiCall('GET', '/settings');
+
+        if (settings.currency) {
+          document.getElementById('currency').value = settings.currency;
+        }
+        if (settings.dayRate !== null && settings.dayRate !== undefined) {
+          document.getElementById('dayRate').value = settings.dayRate;
+        }
+        if (settings.nightRate !== null && settings.nightRate !== undefined) {
+          document.getElementById('nightRate').value = settings.nightRate;
+        }
+
+        let seasons = settings.seasons;
+        if (!seasons || seasons.length === 0) {
+          seasons = [
+            {
+              name: 'Winter',
+              startMonth: 11,
+              startDay: 1,
+              endMonth: 3,
+              endDay: 31,
+              dayStart: '06:00',
+              dayEnd: '22:00'
+            },
+            {
+              name: 'Summer',
+              startMonth: 4,
+              startDay: 1,
+              endMonth: 10,
+              endDay: 31,
+              dayStart: '07:00',
+              dayEnd: '23:00'
+            }
+          ];
+        }
+        renderSeasons(seasons);
+        updateCurrentStatus(settings);
+      } catch (err) {
+        console.error('Error loading settings:', err);
+        // Use defaults on error
+        renderSeasons([
+          { name: 'Winter', startMonth: 11, startDay: 1, endMonth: 3, endDay: 31, dayStart: '06:00', dayEnd: '22:00' },
+          { name: 'Summer', startMonth: 4, startDay: 1, endMonth: 10, endDay: 31, dayStart: '07:00', dayEnd: '23:00' }
+        ]);
+      }
+    }
+
+    function updateCurrentStatus(settings) {
+      const statusEl = document.getElementById('current-status');
+      const seasons = settings.seasons || [];
+
+      if (seasons.length === 0) return;
+
+      const now = new Date();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const currentTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+      let currentSeason = seasons.find(s => isDateInSeason(month, day, s)) || seasons[0];
+
+      const isDayTariff = currentTime >= currentSeason.dayStart && currentTime < currentSeason.dayEnd;
+      const tariff = isDayTariff ? 'Day' : 'Night';
+
+      const rate = isDayTariff ? (settings.dayRate || 0.12) : (settings.nightRate || 0.06);
+      const currency = settings.currency || 'EUR';
+
+      statusEl.innerHTML = `<strong class="text-emerald-600">Current Status:</strong> ${currentSeason.name} season, <strong>${tariff}</strong> tariff (${rate.toFixed(4)} ${currency}/kWh)`;
+    }
+
+    function isDateInSeason(month, day, season) {
+      const { startMonth, startDay, endMonth, endDay } = season;
+
+      if (startMonth > endMonth) {
+        return (month > startMonth || (month === startMonth && day >= startDay)) ||
+               (month < endMonth || (month === endMonth && day <= endDay));
+      } else {
+        return (month > startMonth || (month === startMonth && day >= startDay)) &&
+               (month < endMonth || (month === endMonth && day <= endDay));
+      }
+    }
+
+    function renderSeasons(seasons) {
+      const container = document.getElementById('seasons-container');
+      container.innerHTML = '';
+
+      const inputClasses = 'w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition';
+
+      seasons.forEach((season, index) => {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4';
+        card.innerHTML = `
+          <h4 class="m-0 mb-4 text-emerald-600 flex justify-between items-center">
+            <input type="text" id="season-${index}-name" value="${season.name}" class="border-none bg-transparent text-base font-bold text-emerald-600 w-36 outline-none focus:ring-2 focus:ring-emerald-500 rounded px-1">
+            <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition border-none cursor-pointer" onclick="removeSeason(${index})">Remove</button>
+          </h4>
+
+          <div class="flex gap-3 items-center mb-4">
+            <div class="flex-1">
+              <label class="block mb-1.5 font-medium text-gray-600 text-sm">Start Date</label>
+              <div class="flex gap-2 items-center">
+                <select id="season-${index}-startMonth" class="${inputClasses}">
+                  ${getMonthOptions(season.startMonth)}
+                </select>
+                <input type="number" id="season-${index}-startDay" value="${season.startDay}" min="1" max="31" class="w-16 px-2 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+              </div>
+            </div>
+            <div class="flex-1">
+              <label class="block mb-1.5 font-medium text-gray-600 text-sm">End Date</label>
+              <div class="flex gap-2 items-center">
+                <select id="season-${index}-endMonth" class="${inputClasses}">
+                  ${getMonthOptions(season.endMonth)}
+                </select>
+                <input type="number" id="season-${index}-endDay" value="${season.endDay}" min="1" max="31" class="w-16 px-2 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-3 items-center">
+            <div class="flex-1">
+              <label class="block mb-1.5 font-medium text-gray-600 text-sm">Day Tariff Start</label>
+              <input type="time" id="season-${index}-dayStart" value="${season.dayStart}" class="${inputClasses}">
+            </div>
+            <div class="flex-1">
+              <label class="block mb-1.5 font-medium text-gray-600 text-sm">Day Tariff End</label>
+              <input type="time" id="season-${index}-dayEnd" value="${season.dayEnd}" class="${inputClasses}">
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 mt-2">Night tariff applies outside of day tariff hours</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function getMonthOptions(selectedMonth) {
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+      return months.map((name, index) => {
+        const monthNum = index + 1;
+        const selected = monthNum === selectedMonth ? 'selected' : '';
+        return `<option value="${monthNum}" ${selected}>${name}</option>`;
+      }).join('');
+    }
+
+    function addSeason() {
+      const seasons = collectSeasons();
+      seasons.push({
+        name: `Season ${seasons.length + 1}`,
+        startMonth: 1,
+        startDay: 1,
+        endMonth: 12,
+        endDay: 31,
+        dayStart: '06:00',
+        dayEnd: '22:00'
+      });
+      renderSeasons(seasons);
+    }
+
+    function removeSeason(index) {
+      const seasons = collectSeasons();
+      seasons.splice(index, 1);
+      renderSeasons(seasons);
+    }
+
+    function collectSeasons() {
+      const container = document.getElementById('seasons-container');
+      const seasons = [];
+
+      for (let i = 0; i < container.children.length; i++) {
+        seasons.push({
+          name: document.getElementById(`season-${i}-name`).value,
+          startMonth: parseInt(document.getElementById(`season-${i}-startMonth`).value),
+          startDay: parseInt(document.getElementById(`season-${i}-startDay`).value),
+          endMonth: parseInt(document.getElementById(`season-${i}-endMonth`).value),
+          endDay: parseInt(document.getElementById(`season-${i}-endDay`).value),
+          dayStart: document.getElementById(`season-${i}-dayStart`).value,
+          dayEnd: document.getElementById(`season-${i}-dayEnd`).value
+        });
+      }
+
+      return seasons;
+    }
+
+    async function saveSettings() {
+      const statusEl = document.getElementById('status-message');
+
+      try {
+        const settings = {
+          currency: document.getElementById('currency').value,
+          dayRate: parseFloat(document.getElementById('dayRate').value) || 0.12,
+          nightRate: parseFloat(document.getElementById('nightRate').value) || 0.06,
+          seasons: collectSeasons()
+        };
+
+        await apiCall('PUT', '/settings', settings);
+
+        statusEl.className = 'rounded-lg mt-4 px-4 py-3 text-sm bg-green-100 text-green-800';
+        statusEl.textContent = 'Settings saved successfully!';
+        updateCurrentStatus(settings);
+
+        setTimeout(() => {
+          statusEl.className = 'hidden rounded-lg mt-4 px-4 py-3 text-sm';
+          statusEl.textContent = '';
+        }, 3000);
+
+      } catch (err) {
+        statusEl.className = 'rounded-lg mt-4 px-4 py-3 text-sm bg-red-100 text-red-800';
+        statusEl.textContent = `Error saving settings: ${err.message || err}`;
+        console.error('Save error:', err);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "id": "cost-threshold-exceeded",
+  "title": {
+    "en": "Hourly cost exceeds threshold",
+    "bg": "Часовата цена надвишава прага"
+  },
+  "titleFormatted": {
+    "en": "Hourly cost exceeds [[threshold]] EUR/h",
+    "bg": "Часовата цена надвишава [[threshold]] EUR/ч"
+  },
+  "hint": {
+    "en": "Triggers when the current hourly electricity cost exceeds the configured threshold",
+    "bg": "Задейства се когато текущата часова цена на електричеството надвиши конфигурирания праг"
+  },
+  "args": [
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Threshold (EUR/h)",
+        "bg": "Праг (EUR/ч)"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 0.01
+    }
+  ],
+  "tokens": [
+    {
+      "name": "cost_per_hour",
+      "type": "number",
+      "title": {
+        "en": "Current cost/hour",
+        "bg": "Текуща цена/час"
+      },
+      "example": 0.45
+    },
+    {
+      "name": "total_power",
+      "type": "number",
+      "title": {
+        "en": "Total power (W)",
+        "bg": "Обща мощност (W)"
+      },
+      "example": 3500
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Threshold",
+        "bg": "Праг"
+      },
+      "example": 0.30
+    }
+  ]
+}

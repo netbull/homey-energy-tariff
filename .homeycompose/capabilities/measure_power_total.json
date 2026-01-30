@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Total Power",
+    "bg": "Обща мощност"
+  },
+  "units": {
+    "en": "W",
+    "bg": "W"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icons/power.svg",
+  "decimals": 0,
+  "insights": true
+}

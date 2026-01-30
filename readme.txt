@@ -1,0 +1,3 @@
+Monitor and manage your two-scale electricity tariff with automatic day and night rate switching. Configure seasonal schedules so tariff hours adjust throughout the year, and track your real-time energy costs across all connected devices.
+
+Set your day and night rates, define custom seasons with their own peak hours, and let the app handle the rest. Get flow triggers for tariff changes, cost thresholds, and high-power device alerts. View your energy spending with the built-in chart widget.

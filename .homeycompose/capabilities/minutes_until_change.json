@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Time until change",
+    "bg": "Време до промяна"
+  },
+  "units": {
+    "en": "min",
+    "bg": "мин"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "uiQuickAction": false,
+  "icon": "/assets/icons/clock.svg",
+  "decimals": 0
+}

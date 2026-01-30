@@ -1,0 +1,759 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "com.energy.tariff",
+  "version": "1.0.0",
+  "compatibility": ">=12.1.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Electricity Tariff",
+    "bg": "Тарифа за електричество"
+  },
+  "description": {
+    "en": "Smart day and night electricity tariff tracking with seasonal schedules and cost monitoring",
+    "bg": "Интелигентно проследяване на дневна и нощна тарифа за електричество със сезонни графици и мониторинг на разходите"
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [
+    "homey:manager:api"
+  ],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "netbull"
+  },
+  "brandColor": "#00A651",
+  "api": {
+    "getSettings": {
+      "method": "GET",
+      "path": "/settings"
+    },
+    "putSettings": {
+      "method": "PUT",
+      "path": "/settings"
+    }
+  },
+  "flow": {
+    "triggers": [
+      {
+        "id": "cost-threshold-exceeded",
+        "title": {
+          "en": "Hourly cost exceeds threshold",
+          "bg": "Часовата цена надвишава прага"
+        },
+        "titleFormatted": {
+          "en": "Hourly cost exceeds [[threshold]] EUR/h",
+          "bg": "Часовата цена надвишава [[threshold]] EUR/ч"
+        },
+        "hint": {
+          "en": "Triggers when the current hourly electricity cost exceeds the configured threshold",
+          "bg": "Задейства се когато текущата часова цена на електричеството надвиши конфигурирания праг"
+        },
+        "args": [
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold (EUR/h)",
+              "bg": "Праг (EUR/ч)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 0.01
+          }
+        ],
+        "tokens": [
+          {
+            "name": "cost_per_hour",
+            "type": "number",
+            "title": {
+              "en": "Current cost/hour",
+              "bg": "Текуща цена/час"
+            },
+            "example": 0.45
+          },
+          {
+            "name": "total_power",
+            "type": "number",
+            "title": {
+              "en": "Total power (W)",
+              "bg": "Обща мощност (W)"
+            },
+            "example": 3500
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold",
+              "bg": "Праг"
+            },
+            "example": 0.3
+          }
+        ]
+      },
+      {
+        "id": "daily-cost-exceeded",
+        "title": {
+          "en": "Daily cost exceeds threshold",
+          "bg": "Дневната цена надвишава прага"
+        },
+        "titleFormatted": {
+          "en": "Daily cost exceeds [[threshold]] EUR",
+          "bg": "Дневната цена надвишава [[threshold]] EUR"
+        },
+        "hint": {
+          "en": "Triggers when today's accumulated electricity cost exceeds the configured threshold",
+          "bg": "Задейства се когато натрупаната днешна цена на електричеството надвиши конфигурирания праг"
+        },
+        "args": [
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold (EUR)",
+              "bg": "Праг (EUR)"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 0.5
+          }
+        ],
+        "tokens": [
+          {
+            "name": "cost_today",
+            "type": "number",
+            "title": {
+              "en": "Cost today",
+              "bg": "Цена днес"
+            },
+            "example": 5.5
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold",
+              "bg": "Праг"
+            },
+            "example": 5
+          }
+        ]
+      },
+      {
+        "id": "high-power-device",
+        "title": {
+          "en": "Device exceeds power threshold",
+          "bg": "Устройство надвишава праг на мощност"
+        },
+        "titleFormatted": {
+          "en": "Device exceeds [[threshold]] W",
+          "bg": "Устройство надвишава [[threshold]] W"
+        },
+        "hint": {
+          "en": "Triggers when any single device exceeds the configured power threshold",
+          "bg": "Задейства се когато някое устройство надвиши конфигурирания праг на мощност"
+        },
+        "args": [
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold (W)",
+              "bg": "Праг (W)"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 50
+          }
+        ],
+        "tokens": [
+          {
+            "name": "device_name",
+            "type": "string",
+            "title": {
+              "en": "Device name",
+              "bg": "Име на устройство"
+            },
+            "example": "Air Conditioner"
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)",
+              "bg": "Мощност (W)"
+            },
+            "example": 2500
+          },
+          {
+            "name": "cost_per_hour",
+            "type": "number",
+            "title": {
+              "en": "Device cost/hour",
+              "bg": "Цена/час на устройството"
+            },
+            "example": 0.3
+          }
+        ]
+      },
+      {
+        "id": "tariff-changed",
+        "title": {
+          "en": "Tariff changed",
+          "bg": "Тарифата се промени"
+        },
+        "hint": {
+          "en": "Triggers when the electricity tariff changes between day and night",
+          "bg": "Задейства се когато тарифата за електричество се промени между дневна и нощна"
+        },
+        "tokens": [
+          {
+            "name": "previous_tariff",
+            "type": "string",
+            "title": {
+              "en": "Previous tariff",
+              "bg": "Предишна тарифа"
+            },
+            "example": {
+              "en": "day",
+              "bg": "дневна"
+            }
+          },
+          {
+            "name": "new_tariff",
+            "type": "string",
+            "title": {
+              "en": "New tariff",
+              "bg": "Нова тарифа"
+            },
+            "example": {
+              "en": "night",
+              "bg": "нощна"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "number",
+            "title": {
+              "en": "Current rate (EUR/kWh)",
+              "bg": "Текуща цена (EUR/kWh)"
+            },
+            "example": 0.06
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "current-tariff-is",
+        "title": {
+          "en": "Tariff !{{is|is not}} [[tariff]]",
+          "bg": "Тарифата !{{е|не е}} [[tariff]]"
+        },
+        "titleFormatted": {
+          "en": "Tariff !{{is|is not}} [[tariff]]",
+          "bg": "Тарифата !{{е|не е}} [[tariff]]"
+        },
+        "hint": {
+          "en": "Check if the current electricity tariff is day or night",
+          "bg": "Проверява дали текущата тарифа е дневна или нощна"
+        },
+        "args": [
+          {
+            "name": "tariff",
+            "type": "dropdown",
+            "title": {
+              "en": "Tariff",
+              "bg": "Тарифа"
+            },
+            "values": [
+              {
+                "id": "day",
+                "title": {
+                  "en": "Day",
+                  "bg": "Дневна"
+                }
+              },
+              {
+                "id": "night",
+                "title": {
+                  "en": "Night",
+                  "bg": "Нощна"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "get-current-rate",
+        "title": {
+          "en": "Get current electricity rate",
+          "bg": "Вземи текущата цена на електричеството"
+        },
+        "hint": {
+          "en": "Returns the current electricity rate based on time and season",
+          "bg": "Връща текущата цена на електричеството спрямо времето и сезона"
+        },
+        "tokens": [
+          {
+            "name": "rate",
+            "type": "number",
+            "title": {
+              "en": "Rate",
+              "bg": "Цена"
+            },
+            "example": 0.12
+          },
+          {
+            "name": "tariff",
+            "type": "string",
+            "title": {
+              "en": "Tariff",
+              "bg": "Тарифа"
+            },
+            "example": "day"
+          },
+          {
+            "name": "currency",
+            "type": "string",
+            "title": {
+              "en": "Currency",
+              "bg": "Валута"
+            },
+            "example": "EUR"
+          },
+          {
+            "name": "formatted",
+            "type": "string",
+            "title": {
+              "en": "Formatted rate",
+              "bg": "Форматирана цена"
+            },
+            "example": "0.1200 EUR/kWh"
+          }
+        ]
+      },
+      {
+        "id": "get-top-consumers",
+        "title": {
+          "en": "Get top energy consumers",
+          "bg": "Вземи топ консуматори на енергия"
+        },
+        "hint": {
+          "en": "Returns the devices consuming the most power right now",
+          "bg": "Връща устройствата, които консумират най-много енергия в момента"
+        },
+        "tokens": [
+          {
+            "name": "top_consumer_1",
+            "type": "string",
+            "title": {
+              "en": "#1 Consumer",
+              "bg": "#1 Консуматор"
+            },
+            "example": "Air Conditioner (1200W)"
+          },
+          {
+            "name": "top_consumer_2",
+            "type": "string",
+            "title": {
+              "en": "#2 Consumer",
+              "bg": "#2 Консуматор"
+            },
+            "example": "Water Heater (800W)"
+          },
+          {
+            "name": "top_consumer_3",
+            "type": "string",
+            "title": {
+              "en": "#3 Consumer",
+              "bg": "#3 Консуматор"
+            },
+            "example": "Washing Machine (500W)"
+          },
+          {
+            "name": "total_power",
+            "type": "number",
+            "title": {
+              "en": "Total power (W)",
+              "bg": "Обща мощност (W)"
+            },
+            "example": 2500
+          },
+          {
+            "name": "cost_per_hour",
+            "type": "number",
+            "title": {
+              "en": "Cost per hour (EUR)",
+              "bg": "Цена на час (EUR)"
+            },
+            "example": 0.3
+          }
+        ]
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Electricity Tariff Meter",
+        "bg": "Измервател на тарифа"
+      },
+      "class": "sensor",
+      "energy": {
+        "cumulative": true
+      },
+      "capabilities": [
+        "measure_power",
+        "tariff_type",
+        "measure_price",
+        "season_name",
+        "minutes_until_change",
+        "peak_hours_today",
+        "offpeak_hours_today",
+        "daily_avg_rate",
+        "tariff_changes_today",
+        "measure_power_total",
+        "cost_per_hour",
+        "cost_today",
+        "cost_month_estimate"
+      ],
+      "capabilitiesOptions": {
+        "tariff_type": {
+          "title": {
+            "en": "Current Tariff",
+            "bg": "Текуща тарифа"
+          }
+        },
+        "measure_price": {
+          "title": {
+            "en": "Rate",
+            "bg": "Цена"
+          },
+          "units": {
+            "en": "EUR/kWh"
+          }
+        },
+        "season_name": {
+          "title": {
+            "en": "Season",
+            "bg": "Сезон"
+          }
+        },
+        "minutes_until_change": {
+          "title": {
+            "en": "Minutes until change",
+            "bg": "Минути до промяна"
+          }
+        },
+        "peak_hours_today": {
+          "title": {
+            "en": "Peak hours left",
+            "bg": "Оставащи пикови часове"
+          }
+        },
+        "offpeak_hours_today": {
+          "title": {
+            "en": "Off-peak hours left",
+            "bg": "Оставащи нощни часове"
+          }
+        },
+        "daily_avg_rate": {
+          "title": {
+            "en": "Daily avg rate",
+            "bg": "Средна дневна цена"
+          }
+        },
+        "tariff_changes_today": {
+          "title": {
+            "en": "Changes today",
+            "bg": "Промени днес"
+          }
+        },
+        "measure_power_total": {
+          "title": {
+            "en": "Total Power",
+            "bg": "Обща мощност"
+          }
+        },
+        "cost_per_hour": {
+          "title": {
+            "en": "Cost/hour",
+            "bg": "Цена/час"
+          }
+        },
+        "cost_today": {
+          "title": {
+            "en": "Cost today",
+            "bg": "Цена днес"
+          }
+        },
+        "cost_month_estimate": {
+          "title": {
+            "en": "Monthly estimate",
+            "bg": "Месечна прогноза"
+          }
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [],
+      "images": {
+        "small": "/drivers/tariff-meter/assets/small.png",
+        "large": "/drivers/tariff-meter/assets/large.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "tariff-meter"
+    }
+  ],
+  "widgets": {
+    "energy-chart": {
+      "name": {
+        "en": "Energy Chart",
+        "bg": "Графика на енергията"
+      },
+      "height": 250,
+      "api": {
+        "getChartData": {
+          "method": "GET",
+          "path": "/"
+        }
+      },
+      "id": "energy-chart",
+      "settings": []
+    }
+  },
+  "capabilities": {
+    "cost_month_estimate": {
+      "type": "number",
+      "title": {
+        "en": "Monthly estimate",
+        "bg": "Месечна прогноза"
+      },
+      "units": {
+        "en": "EUR",
+        "bg": "EUR"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icons/cost-month.svg",
+      "decimals": 2,
+      "insights": true
+    },
+    "cost_per_hour": {
+      "type": "number",
+      "title": {
+        "en": "Cost per hour",
+        "bg": "Цена на час"
+      },
+      "units": {
+        "en": "EUR/h",
+        "bg": "EUR/ч"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icons/cost-hour.svg",
+      "decimals": 4,
+      "insights": true
+    },
+    "cost_today": {
+      "type": "number",
+      "title": {
+        "en": "Cost today",
+        "bg": "Цена днес"
+      },
+      "units": {
+        "en": "EUR",
+        "bg": "EUR"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icons/cost-day.svg",
+      "decimals": 2,
+      "insights": true
+    },
+    "daily_avg_rate": {
+      "type": "number",
+      "title": {
+        "en": "Daily average rate",
+        "bg": "Средна дневна цена"
+      },
+      "units": {
+        "en": "EUR/kWh",
+        "bg": "EUR/kWh"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icons/average.svg",
+      "decimals": 4,
+      "insights": true
+    },
+    "measure_power_total": {
+      "type": "number",
+      "title": {
+        "en": "Total Power",
+        "bg": "Обща мощност"
+      },
+      "units": {
+        "en": "W",
+        "bg": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icons/power.svg",
+      "decimals": 0,
+      "insights": true
+    },
+    "measure_price": {
+      "type": "number",
+      "title": {
+        "en": "Electricity Rate",
+        "bg": "Цена на електричество"
+      },
+      "units": {
+        "en": "EUR/kWh",
+        "bg": "EUR/kWh"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "uiQuickAction": false,
+      "icon": "/assets/icons/price.svg",
+      "decimals": 4,
+      "insights": true
+    },
+    "minutes_until_change": {
+      "type": "number",
+      "title": {
+        "en": "Time until change",
+        "bg": "Време до промяна"
+      },
+      "units": {
+        "en": "min",
+        "bg": "мин"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "uiQuickAction": false,
+      "icon": "/assets/icons/clock.svg",
+      "decimals": 0
+    },
+    "offpeak_hours_today": {
+      "type": "number",
+      "title": {
+        "en": "Off-peak hours remaining",
+        "bg": "Оставащи нощни часове"
+      },
+      "units": {
+        "en": "h",
+        "bg": "ч"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icons/offpeak.svg",
+      "decimals": 1,
+      "insights": true
+    },
+    "peak_hours_today": {
+      "type": "number",
+      "title": {
+        "en": "Peak hours remaining",
+        "bg": "Оставащи пикови часове"
+      },
+      "units": {
+        "en": "h",
+        "bg": "ч"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icons/peak.svg",
+      "decimals": 1,
+      "insights": true
+    },
+    "season_name": {
+      "type": "string",
+      "title": {
+        "en": "Season",
+        "bg": "Сезон"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "uiQuickAction": false,
+      "icon": "/assets/icons/season.svg"
+    },
+    "tariff_changes_today": {
+      "type": "number",
+      "title": {
+        "en": "Tariff changes today",
+        "bg": "Промени на тарифата днес"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icons/changes.svg",
+      "decimals": 0,
+      "insights": true
+    },
+    "tariff_type": {
+      "type": "enum",
+      "title": {
+        "en": "Tariff",
+        "bg": "Тарифа"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "uiQuickAction": false,
+      "icon": "/assets/icons/tariff.svg",
+      "values": [
+        {
+          "id": "day",
+          "title": {
+            "en": "Day",
+            "bg": "Дневна"
+          }
+        },
+        {
+          "id": "night",
+          "title": {
+            "en": "Night",
+            "bg": "Нощна"
+          }
+        }
+      ]
+    }
+  }
+}

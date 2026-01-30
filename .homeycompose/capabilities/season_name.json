@@ -1,0 +1,12 @@
+{
+  "type": "string",
+  "title": {
+    "en": "Season",
+    "bg": "Сезон"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "uiQuickAction": false,
+  "icon": "/assets/icons/season.svg"
+}

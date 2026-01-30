@@ -1,0 +1,13 @@
+{
+  "name": {
+    "en": "Energy Chart",
+    "bg": "Графика на енергията"
+  },
+  "height": 250,
+  "api": {
+    "getChartData": {
+      "method": "GET",
+      "path": "/"
+    }
+  }
+}

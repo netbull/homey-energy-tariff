@@ -1,0 +1,58 @@
+{
+  "id": "get-top-consumers",
+  "title": {
+    "en": "Get top energy consumers",
+    "bg": "Вземи топ консуматори на енергия"
+  },
+  "hint": {
+    "en": "Returns the devices consuming the most power right now",
+    "bg": "Връща устройствата, които консумират най-много енергия в момента"
+  },
+  "tokens": [
+    {
+      "name": "top_consumer_1",
+      "type": "string",
+      "title": {
+        "en": "#1 Consumer",
+        "bg": "#1 Консуматор"
+      },
+      "example": "Air Conditioner (1200W)"
+    },
+    {
+      "name": "top_consumer_2",
+      "type": "string",
+      "title": {
+        "en": "#2 Consumer",
+        "bg": "#2 Консуматор"
+      },
+      "example": "Water Heater (800W)"
+    },
+    {
+      "name": "top_consumer_3",
+      "type": "string",
+      "title": {
+        "en": "#3 Consumer",
+        "bg": "#3 Консуматор"
+      },
+      "example": "Washing Machine (500W)"
+    },
+    {
+      "name": "total_power",
+      "type": "number",
+      "title": {
+        "en": "Total power (W)",
+        "bg": "Обща мощност (W)"
+      },
+      "example": 2500
+    },
+    {
+      "name": "cost_per_hour",
+      "type": "number",
+      "title": {
+        "en": "Cost per hour (EUR)",
+        "bg": "Цена на час (EUR)"
+      },
+      "example": 0.30
+    }
+  ]
+}

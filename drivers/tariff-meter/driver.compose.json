@@ -1,0 +1,121 @@
+{
+  "name": {
+    "en": "Electricity Tariff Meter",
+    "bg": "Измервател на тарифа"
+  },
+  "class": "sensor",
+  "energy": {
+    "cumulative": true
+  },
+  "capabilities": [
+    "measure_power",
+    "tariff_type",
+    "measure_price",
+    "season_name",
+    "minutes_until_change",
+    "peak_hours_today",
+    "offpeak_hours_today",
+    "daily_avg_rate",
+    "tariff_changes_today",
+    "measure_power_total",
+    "cost_per_hour",
+    "cost_today",
+    "cost_month_estimate"
+  ],
+  "capabilitiesOptions": {
+    "tariff_type": {
+      "title": {
+        "en": "Current Tariff",
+        "bg": "Текуща тарифа"
+      }
+    },
+    "measure_price": {
+      "title": {
+        "en": "Rate",
+        "bg": "Цена"
+      },
+      "units": {
+        "en": "EUR/kWh"
+      }
+    },
+    "season_name": {
+      "title": {
+        "en": "Season",
+        "bg": "Сезон"
+      }
+    },
+    "minutes_until_change": {
+      "title": {
+        "en": "Minutes until change",
+        "bg": "Минути до промяна"
+      }
+    },
+    "peak_hours_today": {
+      "title": {
+        "en": "Peak hours left",
+        "bg": "Оставащи пикови часове"
+      }
+    },
+    "offpeak_hours_today": {
+      "title": {
+        "en": "Off-peak hours left",
+        "bg": "Оставащи нощни часове"
+      }
+    },
+    "daily_avg_rate": {
+      "title": {
+        "en": "Daily avg rate",
+        "bg": "Средна дневна цена"
+      }
+    },
+    "tariff_changes_today": {
+      "title": {
+        "en": "Changes today",
+        "bg": "Промени днес"
+      }
+    },
+    "measure_power_total": {
+      "title": {
+        "en": "Total Power",
+        "bg": "Обща мощност"
+      }
+    },
+    "cost_per_hour": {
+      "title": {
+        "en": "Cost/hour",
+        "bg": "Цена/час"
+      }
+    },
+    "cost_today": {
+      "title": {
+        "en": "Cost today",
+        "bg": "Цена днес"
+      }
+    },
+    "cost_month_estimate": {
+      "title": {
+        "en": "Monthly estimate",
+        "bg": "Месечна прогноза"
+      }
+    }
+  },
+  "platforms": ["local"],
+  "connectivity": [],
+  "images": {
+    "small": "/drivers/tariff-meter/assets/small.png",
+    "large": "/drivers/tariff-meter/assets/large.png"
+  },
+  "pair": [
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

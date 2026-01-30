@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Peak hours remaining",
+    "bg": "Оставащи пикови часове"
+  },
+  "units": {
+    "en": "h",
+    "bg": "ч"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icons/peak.svg",
+  "decimals": 1,
+  "insights": true
+}

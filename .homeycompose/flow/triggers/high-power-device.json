@@ -1,0 +1,57 @@
+{
+  "id": "high-power-device",
+  "title": {
+    "en": "Device exceeds power threshold",
+    "bg": "Устройство надвишава праг на мощност"
+  },
+  "titleFormatted": {
+    "en": "Device exceeds [[threshold]] W",
+    "bg": "Устройство надвишава [[threshold]] W"
+  },
+  "hint": {
+    "en": "Triggers when any single device exceeds the configured power threshold",
+    "bg": "Задейства се когато някое устройство надвиши конфигурирания праг на мощност"
+  },
+  "args": [
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Threshold (W)",
+        "bg": "Праг (W)"
+      },
+      "min": 0,
+      "max": 10000,
+      "step": 50
+    }
+  ],
+  "tokens": [
+    {
+      "name": "device_name",
+      "type": "string",
+      "title": {
+        "en": "Device name",
+        "bg": "Име на устройство"
+      },
+      "example": "Air Conditioner"
+    },
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Power (W)",
+        "bg": "Мощност (W)"
+      },
+      "example": 2500
+    },
+    {
+      "name": "cost_per_hour",
+      "type": "number",
+      "title": {
+        "en": "Device cost/hour",
+        "bg": "Цена/час на устройството"
+      },
+      "example": 0.30
+    }
+  ]
+}

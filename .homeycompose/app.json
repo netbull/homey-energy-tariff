@@ -1,0 +1,42 @@
+{
+  "id": "com.energy.tariff",
+  "version": "1.0.0",
+  "compatibility": ">=12.1.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Electricity Tariff",
+    "bg": "Тарифа за електричество"
+  },
+  "description": {
+    "en": "Smart day and night electricity tariff tracking with seasonal schedules and cost monitoring",
+    "bg": "Интелигентно проследяване на дневна и нощна тарифа за електричество със сезонни графици и мониторинг на разходите"
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [
+    "homey:manager:api"
+  ],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "netbull"
+  },
+  "brandColor": "#00A651",
+  "api": {
+    "getSettings": {
+      "method": "GET",
+      "path": "/settings"
+    },
+    "putSettings": {
+      "method": "PUT",
+      "path": "/settings"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "current-tariff-is",
+  "title": {
+    "en": "Tariff !{{is|is not}} [[tariff]]",
+    "bg": "Тарифата !{{е|не е}} [[tariff]]"
+  },
+  "titleFormatted": {
+    "en": "Tariff !{{is|is not}} [[tariff]]",
+    "bg": "Тарифата !{{е|не е}} [[tariff]]"
+  },
+  "hint": {
+    "en": "Check if the current electricity tariff is day or night",
+    "bg": "Проверява дали текущата тарифа е дневна или нощна"
+  },
+  "args": [
+    {
+      "name": "tariff",
+      "type": "dropdown",
+      "title": {
+        "en": "Tariff",
+        "bg": "Тарифа"
+      },
+      "values": [
+        {
+          "id": "day",
+          "title": {
+            "en": "Day",
+            "bg": "Дневна"
+          }
+        },
+        {
+          "id": "night",
+          "title": {
+            "en": "Night",
+            "bg": "Нощна"
+          }
+        }
+      ]
+    }
+  ]
+}

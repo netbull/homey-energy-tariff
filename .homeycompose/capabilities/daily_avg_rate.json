@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Daily average rate",
+    "bg": "Средна дневна цена"
+  },
+  "units": {
+    "en": "EUR/kWh",
+    "bg": "EUR/kWh"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icons/average.svg",
+  "decimals": 4,
+  "insights": true
+}

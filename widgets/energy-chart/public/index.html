@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: transparent;
+    color: var(--homey-text-color, #333);
+    padding: 12px;
+    overflow: hidden;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .tariff-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+  }
+  .tariff-day { background: #FFF3CD; color: #856404; }
+  .tariff-night { background: #CCE5FF; color: #004085; }
+
+  .stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .stat {
+    flex: 1;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 10px;
+    opacity: 0.5;
+    text-transform: uppercase;
+  }
+  .power-color { color: #F59E0B; }
+  .cost-color { color: #3B82F6; }
+
+  .chart-container {
+    position: relative;
+    width: 100%;
+    height: 140px;
+  }
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+  .grid-line {
+    stroke: var(--homey-text-color, #999);
+    stroke-opacity: 0.1;
+    stroke-width: 1;
+  }
+  .axis-label {
+    fill: var(--homey-text-color, #999);
+    fill-opacity: 0.4;
+    font-size: 9px;
+  }
+  .power-line {
+    fill: none;
+    stroke: #F59E0B;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .cost-line {
+    fill: none;
+    stroke: #3B82F6;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .power-area {
+    fill: url(#powerGradient);
+  }
+  .cost-area {
+    fill: url(#costGradient);
+  }
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    opacity: 0.6;
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 140px;
+    opacity: 0.4;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h3>Energy</h3>
+    <span id="tariffBadge" class="tariff-badge">--</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value power-color" id="powerValue">--</div>
+      <div class="stat-label">Watts</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value cost-color" id="costValue">--</div>
+      <div class="stat-label" id="costLabel">EUR/h</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="todayValue">--</div>
+      <div class="stat-label" id="todayLabel">EUR today</div>
+    </div>
+  </div>
+
+  <div class="chart-container" id="chartContainer">
+    <div class="no-data" id="noData">Collecting data...</div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#F59E0B"></div>
+      <span>Power (W)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#3B82F6"></div>
+      <span>Cost (EUR/h)</span>
+    </div>
+  </div>
+
+<script type="text/javascript">
+function onHomeyReady(Homey) {
+  Homey.ready();
+  fetchData(Homey);
+  setInterval(() => fetchData(Homey), 30000);
+}
+
+function fetchData(Homey) {
+  Homey.api('GET', '/', function(err, data) {
+    if (err || !data) return;
+    updateStats(data.current);
+    if (data.history && data.history.length > 1) {
+      document.getElementById('noData').style.display = 'none';
+      drawChart(data.history);
+    }
+  });
+}
+
+function updateStats(current) {
+  if (!current) return;
+
+  var badge = document.getElementById('tariffBadge');
+  badge.textContent = current.tariff === 'day' ? 'Day' : 'Night';
+  badge.className = 'tariff-badge tariff-' + current.tariff;
+
+  document.getElementById('powerValue').textContent = Math.round(current.totalPower);
+  document.getElementById('costValue').textContent = current.costPerHour.toFixed(3);
+  document.getElementById('costLabel').textContent = current.currency + '/h';
+  document.getElementById('todayValue').textContent =
+    (current.costPerHour * 24).toFixed(2);
+  document.getElementById('todayLabel').textContent = current.currency + ' est/day';
+}
+
+function drawChart(history) {
+  var container = document.getElementById('chartContainer');
+  var W = container.clientWidth;
+  var H = 140;
+  var padL = 30, padR = 8, padT = 8, padB = 18;
+  var chartW = W - padL - padR;
+  var chartH = H - padT - padB;
+
+  // Extract series
+  var powers = history.map(function(p) { return p.power; });
+  var costs = history.map(function(p) { return p.costH; });
+  var times = history.map(function(p) { return p.t; });
+
+  var maxPower = Math.max.apply(null, powers) || 1;
+  var maxCost = Math.max.apply(null, costs) || 0.01;
+
+  // Round up axis max for cleaner labels
+  maxPower = Math.ceil(maxPower / 100) * 100 || 100;
+  maxCost = Math.ceil(maxCost * 100) / 100 || 0.01;
+
+  var n = history.length;
+
+  function xPos(i) { return padL + (i / (n - 1)) * chartW; }
+  function yPower(v) { return padT + chartH - (v / maxPower) * chartH; }
+  function yCost(v) { return padT + chartH - (v / maxCost) * chartH; }
+
+  // Build power path
+  var powerPath = '';
+  var powerArea = 'M' + xPos(0) + ',' + (padT + chartH);
+  for (var i = 0; i < n; i++) {
+    var x = xPos(i);
+    var y = yPower(powers[i]);
+    powerPath += (i === 0 ? 'M' : 'L') + x + ',' + y;
+    powerArea += 'L' + x + ',' + y;
+  }
+  powerArea += 'L' + xPos(n - 1) + ',' + (padT + chartH) + 'Z';
+
+  // Build cost path
+  var costPath = '';
+  var costArea = 'M' + xPos(0) + ',' + (padT + chartH);
+  for (var j = 0; j < n; j++) {
+    var cx = xPos(j);
+    var cy = yCost(costs[j]);
+    costPath += (j === 0 ? 'M' : 'L') + cx + ',' + cy;
+    costArea += 'L' + cx + ',' + cy;
+  }
+  costArea += 'L' + xPos(n - 1) + ',' + (padT + chartH) + 'Z';
+
+  // Time labels
+  var firstTime = new Date(times[0]);
+  var lastTime = new Date(times[n - 1]);
+  var fmtTime = function(d) {
+    return String(d.getHours()).padStart(2, '0') + ':' +
+           String(d.getMinutes()).padStart(2, '0');
+  };
+
+  // Grid lines (3 horizontal)
+  var gridLines = '';
+  for (var g = 0; g <= 2; g++) {
+    var gy = padT + (g / 2) * chartH;
+    gridLines += '<line x1="' + padL + '" y1="' + gy +
+      '" x2="' + (W - padR) + '" y2="' + gy + '" class="grid-line"/>';
+  }
+
+  var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">' +
+    '<defs>' +
+    '<linearGradient id="powerGradient" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0%" stop-color="#F59E0B" stop-opacity="0.3"/>' +
+    '<stop offset="100%" stop-color="#F59E0B" stop-opacity="0.02"/>' +
+    '</linearGradient>' +
+    '<linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0%" stop-color="#3B82F6" stop-opacity="0.2"/>' +
+    '<stop offset="100%" stop-color="#3B82F6" stop-opacity="0.02"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    gridLines +
+    // Y-axis labels (power)
+    '<text x="' + (padL - 4) + '" y="' + (padT + 4) + '" class="axis-label" text-anchor="end">' + maxPower + 'W</text>' +
+    '<text x="' + (padL - 4) + '" y="' + (padT + chartH) + '" class="axis-label" text-anchor="end">0</text>' +
+    // X-axis time labels
+    '<text x="' + padL + '" y="' + (H - 2) + '" class="axis-label" text-anchor="start">' + fmtTime(firstTime) + '</text>' +
+    '<text x="' + (W - padR) + '" y="' + (H - 2) + '" class="axis-label" text-anchor="end">' + fmtTime(lastTime) + '</text>' +
+    // Areas
+    '<path d="' + powerArea + '" class="power-area"/>' +
+    '<path d="' + costArea + '" class="cost-area"/>' +
+    // Lines
+    '<path d="' + powerPath + '" class="power-line"/>' +
+    '<path d="' + costPath + '" class="cost-line"/>' +
+    '</svg>';
+
+  container.innerHTML = svg;
+}
+</script>
+</body>
+</html>

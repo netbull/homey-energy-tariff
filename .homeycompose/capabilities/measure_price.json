@@ -1,0 +1,18 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Electricity Rate",
+    "bg": "Цена на електричество"
+  },
+  "units": {
+    "en": "EUR/kWh",
+    "bg": "EUR/kWh"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "uiQuickAction": false,
+  "icon": "/assets/icons/price.svg",
+  "decimals": 4,
+  "insights": true
+}

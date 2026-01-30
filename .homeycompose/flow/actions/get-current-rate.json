@@ -1,0 +1,49 @@
+{
+  "id": "get-current-rate",
+  "title": {
+    "en": "Get current electricity rate",
+    "bg": "Вземи текущата цена на електричеството"
+  },
+  "hint": {
+    "en": "Returns the current electricity rate based on time and season",
+    "bg": "Връща текущата цена на електричеството спрямо времето и сезона"
+  },
+  "tokens": [
+    {
+      "name": "rate",
+      "type": "number",
+      "title": {
+        "en": "Rate",
+        "bg": "Цена"
+      },
+      "example": 0.12
+    },
+    {
+      "name": "tariff",
+      "type": "string",
+      "title": {
+        "en": "Tariff",
+        "bg": "Тарифа"
+      },
+      "example": "day"
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "title": {
+        "en": "Currency",
+        "bg": "Валута"
+      },
+      "example": "EUR"
+    },
+    {
+      "name": "formatted",
+      "type": "string",
+      "title": {
+        "en": "Formatted rate",
+        "bg": "Форматирана цена"
+      },
+      "example": "0.1200 EUR/kWh"
+    }
+  ]
+}

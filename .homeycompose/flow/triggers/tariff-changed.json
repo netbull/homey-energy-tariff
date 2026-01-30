@@ -1,0 +1,46 @@
+{
+  "id": "tariff-changed",
+  "title": {
+    "en": "Tariff changed",
+    "bg": "Тарифата се промени"
+  },
+  "hint": {
+    "en": "Triggers when the electricity tariff changes between day and night",
+    "bg": "Задейства се когато тарифата за електричество се промени между дневна и нощна"
+  },
+  "tokens": [
+    {
+      "name": "previous_tariff",
+      "type": "string",
+      "title": {
+        "en": "Previous tariff",
+        "bg": "Предишна тарифа"
+      },
+      "example": {
+        "en": "day",
+        "bg": "дневна"
+      }
+    },
+    {
+      "name": "new_tariff",
+      "type": "string",
+      "title": {
+        "en": "New tariff",
+        "bg": "Нова тарифа"
+      },
+      "example": {
+        "en": "night",
+        "bg": "нощна"
+      }
+    },
+    {
+      "name": "rate",
+      "type": "number",
+      "title": {
+        "en": "Current rate (EUR/kWh)",
+        "bg": "Текуща цена (EUR/kWh)"
+      },
+      "example": 0.06
+    }
+  ]
+}

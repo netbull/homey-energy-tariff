@@ -1,0 +1,34 @@
+{
+  "settings": {
+    "title": "Electricity Tariff Settings",
+    "currency": "Currency",
+    "dayRate": "Day Rate",
+    "nightRate": "Night Rate",
+    "seasons": "Seasonal Schedules",
+    "addSeason": "Add Season",
+    "removeSeason": "Remove",
+    "seasonName": "Season Name",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "dayTariffStart": "Day Tariff Start",
+    "dayTariffEnd": "Day Tariff End",
+    "saveSettings": "Save Settings",
+    "saved": "Settings saved successfully!",
+    "error": "Error saving settings"
+  },
+  "flow": {
+    "triggers": {
+      "tariffChanged": "Tariff changed"
+    },
+    "conditions": {
+      "currentTariffIs": "Current tariff is"
+    },
+    "actions": {
+      "getCurrentRate": "Get current electricity rate"
+    }
+  },
+  "tariff": {
+    "day": "Day",
+    "night": "Night"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Cost per hour",
+    "bg": "Цена на час"
+  },
+  "units": {
+    "en": "EUR/h",
+    "bg": "EUR/ч"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icons/cost-hour.svg",
+  "decimals": 4,
+  "insights": true
+}

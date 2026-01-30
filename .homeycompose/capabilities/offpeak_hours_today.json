@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Off-peak hours remaining",
+    "bg": "Оставащи нощни часове"
+  },
+  "units": {
+    "en": "h",
+    "bg": "ч"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icons/offpeak.svg",
+  "decimals": 1,
+  "insights": true
+}

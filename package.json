@@ -1,0 +1,27 @@
+{
+  "name": "com.energy.tariff",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "build": "homey app build",
+    "run": "homey app run",
+    "install": "homey app install",
+    "publish": "homey app publish",
+    "validate": "homey app validate"
+  },
+  "keywords": [
+    "homey",
+    "electricity",
+    "tariff",
+    "energo-pro",
+    "bulgaria",
+    "energy"
+  ],
+  "author": "netbull",
+  "license": "ISC",
+  "description": "Two-scale electricity tariff management with seasonal schedules",
+  "dependencies": {
+    "homey": "^3.12.2",
+    "homey-api": "^1.0.0"
+  }
+}

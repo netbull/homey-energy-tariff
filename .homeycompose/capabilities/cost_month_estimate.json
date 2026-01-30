@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Monthly estimate",
+    "bg": "Месечна прогноза"
+  },
+  "units": {
+    "en": "EUR",
+    "bg": "EUR"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icons/cost-month.svg",
+  "decimals": 2,
+  "insights": true
+}

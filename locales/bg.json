@@ -1,0 +1,34 @@
+{
+  "settings": {
+    "title": "Настройки на тарифата за електричество",
+    "currency": "Валута",
+    "dayRate": "Дневна тарифа",
+    "nightRate": "Нощна тарифа",
+    "seasons": "Сезонни графици",
+    "addSeason": "Добави сезон",
+    "removeSeason": "Премахни",
+    "seasonName": "Име на сезон",
+    "startDate": "Начална дата",
+    "endDate": "Крайна дата",
+    "dayTariffStart": "Начало на дневна тарифа",
+    "dayTariffEnd": "Край на дневна тарифа",
+    "saveSettings": "Запази настройките",
+    "saved": "Настройките са запазени успешно!",
+    "error": "Грешка при запазване на настройките"
+  },
+  "flow": {
+    "triggers": {
+      "tariffChanged": "Тарифата се промени"
+    },
+    "conditions": {
+      "currentTariffIs": "Текущата тарифа е"
+    },
+    "actions": {
+      "getCurrentRate": "Вземи текущата цена на електричеството"
+    }
+  },
+  "tariff": {
+    "day": "Дневна",
+    "night": "Нощна"
+  }
+}
