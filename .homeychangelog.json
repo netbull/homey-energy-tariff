@@ -10,5 +10,8 @@
   "1.0.2": {
     "en": "Redesigned app and driver icons to meet App Store guidelines. Updated app store images with energy dashboard visualization. Added proper driver device images. Created widget preview images for light and dark mode. Fixed energy chart widget not loading data.",
     "bg": "Преработени икони на приложението и драйвера съгласно изискванията на App Store. Обновени изображения за магазина с визуализация на енергийно табло. Добавени подходящи изображения на устройството за драйвера. Създадени изображения за преглед на уиджета в светъл и тъмен режим. Поправен уиджет за енергийна графика, който не зареждаше данни."
+  },
+  "1.0.3": {
+    "en": "Widget fix"
   }
 }
