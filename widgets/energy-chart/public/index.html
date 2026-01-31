@@ -121,7 +121,6 @@
     font-size: 13px;
   }
 </style>
-  <script type="text/javascript" src="/homey.js" data-origin="widget"></script>
 </head>
 <body>
   <div class="header">
@@ -161,20 +160,28 @@
 
 <script type="text/javascript">
 function onHomeyReady(Homey) {
-  Homey.ready();
+  Homey.ready({ height: 250 });
   fetchData(Homey);
-  setInterval(() => fetchData(Homey), 30000);
+  setInterval(function() { fetchData(Homey); }, 30000);
 }
 
 function fetchData(Homey) {
-  Homey.api('GET', '/', function(err, data) {
-    if (err || !data) return;
-    updateStats(data.current);
-    if (data.history && data.history.length > 1) {
-      document.getElementById('noData').style.display = 'none';
-      drawChart(data.history);
-    }
-  });
+  Homey.api('GET', '/', {})
+    .then(function(data) {
+      if (!data) return;
+
+      updateStats(data.current);
+
+      if (data.history && data.history.length > 1) {
+        document.getElementById('noData').style.display = 'none';
+        drawChart(data.history);
+      } else {
+        document.getElementById('noData').textContent = 'Waiting for chart data...';
+      }
+    })
+    .catch(function(err) {
+      console.error('Widget API error:', err);
+    });
 }
 
 function updateStats(current) {
@@ -184,12 +191,12 @@ function updateStats(current) {
   badge.textContent = current.tariff === 'day' ? 'Day' : 'Night';
   badge.className = 'tariff-badge tariff-' + current.tariff;
 
-  document.getElementById('powerValue').textContent = Math.round(current.totalPower);
-  document.getElementById('costValue').textContent = current.costPerHour.toFixed(3);
-  document.getElementById('costLabel').textContent = current.currency + '/h';
+  document.getElementById('powerValue').textContent = Math.round(current.totalPower || 0);
+  document.getElementById('costValue').textContent = (current.costPerHour || 0).toFixed(3);
+  document.getElementById('costLabel').textContent = (current.currency || 'EUR') + '/h';
   document.getElementById('todayValue').textContent =
-    (current.costPerHour * 24).toFixed(2);
-  document.getElementById('todayLabel').textContent = current.currency + ' est/day';
+    ((current.costPerHour || 0) * 24).toFixed(2);
+  document.getElementById('todayLabel').textContent = (current.currency || 'EUR') + ' est/day';
 }
 
 function drawChart(history) {
